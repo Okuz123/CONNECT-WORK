@@ -1,0 +1,13 @@
+:root {
+  --cw-primary: #0F52BA;
+  --cw-secondary: #D97706;
+  --cw-bg: #F8FAFC;
+  --cw-text: #0F172A;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--cw-bg);
+  color: var(--cw-text);
+  font-family: system-ui, -apple-system, sans-serif;
+}

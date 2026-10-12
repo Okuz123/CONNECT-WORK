@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Builds
+dist/
+build/
+*.apk
+*.aab
+
+# Env
+.env
+.env.local
+*.local
+
+# Firebase secrets
+google-services.json
+GoogleService-Info.plist
+serviceAccountKey.json
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

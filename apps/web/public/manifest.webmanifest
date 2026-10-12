@@ -1,0 +1,9 @@
+{
+  "name": "CONNECT WORK",
+  "short_name": "ConnectWork",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F52BA",
+  "theme_color": "#0F52BA",
+  "icons": []
+}
