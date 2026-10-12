@@ -1,31 +1,34 @@
 import { Router } from 'express';
+import { listCollection } from '../services/firestore.js';
 
 const router = Router();
 
-// GET /api/admin/stats
-router.get('/stats', (_req, res) => {
-  res.json({
-    users: 0,
-    workers: 0,
-    owners: 0,
-    jobs: 0,
-    applications: 0,
-    revenue: 0,
-    ts: Date.now(),
-  });
+router.get('/stats', async (_req, res, next) => {
+  try {
+    const users = await listCollection('users');
+    const jobs = await listCollection('jobs');
+    const apps = await listCollection('applications');
+    res.json({
+      users: users.length,
+      workers: users.filter((u) => u.role === 'worker').length,
+      owners: users.filter((u) => u.role === 'owner').length,
+      jobs: jobs.length,
+      applications: apps.length,
+      revenue: 0,
+      ts: Date.now(),
+    });
+  } catch (e) { next(e); }
 });
 
-// GET /api/admin/users
-router.get('/users', (_req, res) => {
-  res.json({ users: [] });
+router.get('/users', async (_req, res, next) => {
+  try { res.json({ users: await listCollection('users') }); }
+  catch (e) { next(e); }
 });
 
-// POST /api/admin/approve/:id
 router.post('/approve/:id', (req, res) => {
   res.json({ approved: true, id: req.params.id });
 });
 
-// POST /api/admin/reject/:id
 router.post('/reject/:id', (req, res) => {
   res.json({ rejected: true, id: req.params.id });
 });

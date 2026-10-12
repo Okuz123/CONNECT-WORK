@@ -9,60 +9,88 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.connectwork.app.ui.screens.*
+import com.connectwork.app.ui.theme.ConnectWorkTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme { AppRoot() }
+            ConnectWorkTheme {
+                Surface {
+                    AppRoot()
+                }
+            }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppRoot() {
     var screen by remember { mutableStateOf("home") }
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("CONNECT WORK") })
-        }
-    ) { pad ->
-        Column(
-            Modifier
-                .padding(pad)
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            when (screen) {
-                "home" -> {
-                    Text("Welcome", style = MaterialTheme.typography.headlineMedium)
-                    Spacer(Modifier.height(24.dp))
-                    Button(onClick = { screen = "customer" }, Modifier.fillMaxWidth()) {
-                        Text("I need to hire")
-                    }
-                    Spacer(Modifier.height(8.dp))
-                    Button(onClick = { screen = "worker" }, Modifier.fillMaxWidth()) {
-                        Text("I want work")
-                    }
-                    Spacer(Modifier.height(8.dp))
-                    OutlinedButton(onClick = { screen = "admin" }, Modifier.fillMaxWidth()) {
-                        Text("Admin")
+            TopAppBar(
+                title = { Text("CONNECT WORK") },
+                navigationIcon = {
+                    if (screen != "home") {
+                        TextButton(onClick = { screen = "home" }) { Text("← Back") }
                     }
                 }
-                "customer" -> SimpleScreen("Customer panel", onBack = { screen = "home" })
-                "worker" -> SimpleScreen("Worker panel", onBack = { screen = "home" })
-                "admin" -> SimpleScreen("Admin panel", onBack = { screen = "home" })
+            )
+        }
+    ) { pad ->
+        Box(Modifier.padding(pad).fillMaxSize()) {
+            when (screen) {
+                "home" -> HomeScreen(
+                    onCustomer = { screen = "customer" },
+                    onWorker = { screen = "worker" },
+                    onOwner = { screen = "owner" },
+                    onAdmin = { screen = "admin" },
+                    onLogin = { screen = "login" }
+                )
+                "login" -> LoginScreen(onSignIn = { screen = "home" })
+                "customer" -> JobListScreen(emptyList())
+                "worker" -> WorkerProfileScreen(onSave = { screen = "home" })
+                "owner" -> OwnerScreen(
+                    onPostJob = { screen = "post" },
+                    onViewJobs = { screen = "jobs" }
+                )
+                "post" -> PostJobScreen(onPost = { _, _, _, _ -> screen = "owner" })
+                "jobs" -> JobListScreen(emptyList())
+                "admin" -> AdminScreen()
             }
         }
     }
 }
 
 @Composable
-private fun SimpleScreen(title: String, onBack: () -> Unit) {
-    Text(title, style = MaterialTheme.typography.headlineSmall)
-    Spacer(Modifier.height(16.dp))
-    Button(onClick = onBack) { Text("Back") }
+private fun HomeScreen(
+    onCustomer: () -> Unit,
+    onWorker: () -> Unit,
+    onOwner: () -> Unit,
+    onAdmin: () -> Unit,
+    onLogin: () -> Unit
+) {
+    Column(
+        Modifier.fillMaxSize().padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text("Welcome", style = MaterialTheme.typography.headlineMedium)
+        Spacer(Modifier.height(8.dp))
+        Text("Hire skilled workers. Get hired.", style = MaterialTheme.typography.bodyMedium)
+        Spacer(Modifier.height(24.dp))
+        Button(onClick = onCustomer, Modifier.fillMaxWidth()) { Text("I need to hire") }
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = onWorker, Modifier.fillMaxWidth()) { Text("I want work") }
+        Spacer(Modifier.height(8.dp))
+        OutlinedButton(onClick = onOwner, Modifier.fillMaxWidth()) { Text("Business owner") }
+        Spacer(Modifier.height(8.dp))
+        OutlinedButton(onClick = onAdmin, Modifier.fillMaxWidth()) { Text("Admin") }
+        Spacer(Modifier.height(16.dp))
+        TextButton(onClick = onLogin) { Text("Sign in") }
+    }
 }

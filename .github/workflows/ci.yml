@@ -1,10 +1,8 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  push: { branches: [main] }
+  pull_request: { branches: [main] }
 
 jobs:
   web:
@@ -13,9 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install & build web
+        with: { node-version: 20 }
+      - name: Install and build
         run: |
           cd apps/web
           npm install
@@ -27,9 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install server
-        run: |
-          cd server
-          npm install
+        with: { node-version: 20 }
+      - name: Install
+        run: cd server && npm install

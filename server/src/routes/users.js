@@ -1,47 +1,36 @@
 import { Router } from 'express';
+import { listCollection, createDoc, getDoc, updateDoc } from '../services/firestore.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = Router();
 
-// In-memory demo store (replace with Firestore later)
-const users = [];
-
-// GET /api/users
-router.get('/', (_req, res) => {
-  res.json({ users });
+router.get('/', async (_req, res, next) => {
+  try { res.json({ users: await listCollection('users') }); }
+  catch (e) { next(e); }
 });
 
-// GET /api/users/:id
-router.get('/:id', (req, res) => {
-  const u = users.find((x) => x.id === req.params.id);
-  if (!u) return res.status(404).json({ error: 'User not found' });
-  res.json(u);
+router.get('/:id', async (req, res, next) => {
+  try {
+    const u = await getDoc('users', req.params.id);
+    if (!u) return res.status(404).json({ error: 'User not found' });
+    res.json(u);
+  } catch (e) { next(e); }
 });
 
-// POST /api/users
-router.post('/', (req, res) => {
-  const { name, phone, email, role = 'customer', skills = [] } = req.body || {};
-  if (!name) return res.status(400).json({ error: 'name is required' });
-
-  const user = {
-    id: String(Date.now()),
-    name,
-    phone,
-    email,
-    role,
-    skills,
-    verified: false,
-    createdAt: Date.now(),
-  };
-  users.push(user);
-  res.status(201).json(user);
+router.post('/', async (req, res, next) => {
+  try {
+    const { name, phone, email, role = 'customer', skills = [] } = req.body;
+    if (!name) return res.status(400).json({ error: 'name required' });
+    const user = await createDoc('users', {
+      name, phone, email, role, skills, verified: false,
+    });
+    res.status(201).json(user);
+  } catch (e) { next(e); }
 });
 
-// PATCH /api/users/:id
-router.patch('/:id', (req, res) => {
-  const u = users.find((x) => x.id === req.params.id);
-  if (!u) return res.status(404).json({ error: 'User not found' });
-  Object.assign(u, req.body, { updatedAt: Date.now() });
-  res.json(u);
+router.patch('/:id', requireAuth, async (req, res, next) => {
+  try { res.json(await updateDoc('users', req.params.id, req.body)); }
+  catch (e) { next(e); }
 });
 
 export default router;

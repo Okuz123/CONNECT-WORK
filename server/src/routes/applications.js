@@ -1,42 +1,36 @@
 import { Router } from 'express';
+import { listCollection, createDoc, updateDoc } from '../services/firestore.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = Router();
-const apps = [];
 
-// GET /api/applications  ?jobId=  ?workerId=
-router.get('/', (req, res) => {
-  const { jobId, workerId } = req.query;
-  let out = apps;
-  if (jobId) out = out.filter((a) => a.jobId === jobId);
-  if (workerId) out = out.filter((a) => a.workerId === workerId);
-  res.json({ applications: out });
+router.get('/', async (req, res, next) => {
+  try {
+    const filters = {};
+    if (req.query.jobId) filters.jobId = req.query.jobId;
+    if (req.query.workerId) filters.workerId = req.query.workerId;
+    res.json({ applications: await listCollection('applications', filters) });
+  } catch (e) { next(e); }
 });
 
-// POST /api/applications
-router.post('/', (req, res) => {
-  const { jobId, workerId, message, proposedRate } = req.body || {};
-  if (!jobId || !workerId) {
-    return res.status(400).json({ error: 'jobId and workerId required' });
-  }
-  const app = {
-    id: String(Date.now()),
-    jobId,
-    workerId,
-    message: message || '',
-    proposedRate,
-    status: 'pending',
-    createdAt: Date.now(),
-  };
-  apps.push(app);
-  res.status(201).json(app);
+router.post('/', requireAuth, async (req, res, next) => {
+  try {
+    const { jobId, message, proposedRate } = req.body;
+    if (!jobId) return res.status(400).json({ error: 'jobId required' });
+    const app = await createDoc('applications', {
+      jobId,
+      workerId: req.user?.uid || 'demo',
+      message: message || '',
+      proposedRate,
+      status: 'pending',
+    });
+    res.status(201).json(app);
+  } catch (e) { next(e); }
 });
 
-// PATCH /api/applications/:id  { status: 'accepted' | 'rejected' }
-router.patch('/:id', (req, res) => {
-  const a = apps.find((x) => x.id === req.params.id);
-  if (!a) return res.status(404).json({ error: 'Application not found' });
-  Object.assign(a, req.body, { updatedAt: Date.now() });
-  res.json(a);
+router.patch('/:id', requireAuth, async (req, res, next) => {
+  try { res.json(await updateDoc('applications', req.params.id, req.body)); }
+  catch (e) { next(e); }
 });
 
 export default router;
