@@ -17,9 +17,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ConnectWorkTheme {
-                Surface {
-                    AppRoot()
-                }
+                Surface { AppRoot() }
             }
         }
     }
@@ -52,14 +50,14 @@ fun AppRoot() {
                     onLogin = { screen = "login" }
                 )
                 "login" -> LoginScreen(onSignIn = { screen = "home" })
-                "customer" -> JobListScreen(emptyList())
+                "customer" -> JobListScreen()
                 "worker" -> WorkerProfileScreen(onSave = { screen = "home" })
                 "owner" -> OwnerScreen(
                     onPostJob = { screen = "post" },
                     onViewJobs = { screen = "jobs" }
                 )
-                "post" -> PostJobScreen(onPost = { _, _, _, _ -> screen = "owner" })
-                "jobs" -> JobListScreen(emptyList())
+                "post" -> PostJobScreen(onPosted = { screen = "jobs" })
+                "jobs" -> JobListScreen()
                 "admin" -> AdminScreen()
             }
         }

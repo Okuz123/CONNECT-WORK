@@ -4,16 +4,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.connectwork.app.data.Job
+import com.connectwork.app.data.repo.JobRepository
 
 @Composable
 fun JobListScreen(
-    jobs: List<Job>,
     onOpen: (Job) -> Unit = {}
 ) {
+    val jobs by JobRepository.jobs.collectAsState()
+
+    LaunchedEffect(Unit) { JobRepository.seedDemo() }
+
     LazyColumn(
         Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)

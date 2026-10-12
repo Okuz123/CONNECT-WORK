@@ -1,4 +1,4 @@
-import { CATEGORIES } from '../../../../shared/constants';
+import { CATEGORIES } from '../shared/constants';
 
 export default function CustomerPanel() {
   return (
