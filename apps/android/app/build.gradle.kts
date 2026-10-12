@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -21,7 +22,7 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true }
-    composeOptions { kotlinCompilerExtensionVersion = "1.5.14" }
+    // NOTE: no composeOptions block — the Kotlin Compose plugin handles this in Kotlin 2.0+
 }
 
 dependencies {
@@ -33,11 +34,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
-
-    // Lifecycle + ViewModel
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.6")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
-
-    // Coroutines (needed by JobRepository StateFlow)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 }
