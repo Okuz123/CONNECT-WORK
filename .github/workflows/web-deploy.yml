@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'apps/web/**'
+      - '.github/workflows/web-deploy.yml'
   workflow_dispatch:
 
 jobs:
@@ -13,12 +14,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - name: Build web
-        run: |
-          cd apps/web
-          npm install
-          npm run build
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Build web (retry)
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          retry_wait_seconds: 20
+          command: |
+            cd apps/web
+            npm install --no-audit --no-fund
+            npm run build
+
       - name: Upload dist artifact
         uses: actions/upload-artifact@v4
         with:

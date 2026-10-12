@@ -13,6 +13,11 @@ jobs:
     name: Build debug APK
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        attempt: [1]
 
     steps:
       - uses: actions/checkout@v4
@@ -22,6 +27,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+          cache: gradle
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
@@ -34,14 +40,21 @@ jobs:
           if [ ! -f gradlew ]; then gradle wrapper --gradle-version 8.9; fi
           chmod +x gradlew
 
-      - name: Build debug APK
-        run: |
-          cd apps/android
-          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Build debug APK (attempt ${{ matrix.attempt }})
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_wait_seconds: 30
+          command: |
+            cd apps/android
+            ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: connect-work-debug-apk
+          name: connect-work-debug-apk-attempt-${{ matrix.attempt }}
           path: apps/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: warn
           retention-days: 30
