@@ -31,5 +31,3 @@ Thumbs.db
 *.log
 npm-debug.log*
 
-# Generated web shared copies
-apps/web/src/shared/*.ts
