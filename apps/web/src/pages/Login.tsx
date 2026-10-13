@@ -73,10 +73,6 @@ export default function Login() {
         {error && (
           <p style={{ color: 'var(--cw-danger)', marginTop: 12, fontSize: 13 }}>{error}</p>
         )}
-
-        <p style={{ color: 'var(--cw-muted)', fontSize: 12, marginTop: 16 }}>
-          Requires Firebase env vars (VITE_FIREBASE_*). See <code>apps/web/.env.local</code>.
-        </p>
       </div>
     </div>
   );

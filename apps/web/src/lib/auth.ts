@@ -1,14 +1,12 @@
 import {
-  GoogleAuthProvider,
-  RecaptchaVerifier,
-  signInWithPopup,
-  signInWithPhoneNumber,
-  signOut as fbSignOut,
-  type ConfirmationResult,
+  GoogleAuthProvider, RecaptchaVerifier,
+  signInWithPopup, signInWithPhoneNumber,
+  signOut as fbSignOut, type ConfirmationResult,
 } from 'firebase/auth';
 import { auth } from './firebase';
 
 let confirmation: ConfirmationResult | null = null;
+let verifier: RecaptchaVerifier | null = null;
 
 export async function signInWithGoogle() {
   if (!auth) throw new Error('Firebase not configured');
@@ -17,15 +15,17 @@ export async function signInWithGoogle() {
   return result.user;
 }
 
-export function setupRecaptcha(containerId: string) {
+export function getRecaptcha(containerId = 'recaptcha-container') {
   if (!auth) throw new Error('Firebase not configured');
-  return new RecaptchaVerifier(auth, containerId, { size: 'invisible' });
+  if (!verifier) {
+    verifier = new RecaptchaVerifier(auth, containerId, { size: 'invisible' });
+  }
+  return verifier;
 }
 
-export async function sendOtp(phone: string, containerId = 'recaptcha-container') {
+export async function sendOtp(phone: string) {
   if (!auth) throw new Error('Firebase not configured');
-  const verifier = setupRecaptcha(containerId);
-  confirmation = await signInWithPhoneNumber(auth, phone, verifier);
+  confirmation = await signInWithPhoneNumber(auth, phone, getRecaptcha());
   return confirmation;
 }
 
@@ -37,6 +37,7 @@ export async function verifyOtp(otp: string) {
 
 export async function signOut() {
   if (!auth) return;
+  if (verifier) { verifier.clear(); verifier = null; }
   await fbSignOut(auth);
 }
 
