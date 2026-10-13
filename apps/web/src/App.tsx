@@ -10,6 +10,7 @@ import WorkerDetail from './pages/worker/WorkerDetail';
 import JobsList from './pages/jobs/JobsList';
 import JobDetail from './pages/jobs/JobDetail';
 import ChatPage from './pages/chat/ChatPage';
+import AdminManagers from './pages/AdminManagers';
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="/jobs" element={<JobsList />} />
           <Route path="/jobs/:id" element={<JobDetail />} />
           <Route path="/chat/:chatId" element={<ChatPage />} />
+          <Route path="/admin/managers" element={<AdminManagers />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
