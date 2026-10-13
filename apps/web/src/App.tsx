@@ -6,6 +6,7 @@ import AdminPanel from './pages/AdminPanel';
 import OwnerPanel from './pages/OwnerPanel';
 import WorkerPanel from './pages/WorkerPanel';
 import CustomerPanel from './pages/CustomerPanel';
+import WorkerDetail from './pages/worker/WorkerDetail';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/owner/*" element={<OwnerPanel />} />
           <Route path="/worker/*" element={<WorkerPanel />} />
           <Route path="/customer/*" element={<CustomerPanel />} />
+          <Route path="/worker/:id" element={<WorkerDetail />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

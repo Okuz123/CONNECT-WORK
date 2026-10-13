@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { listWorkers } from '../lib/workers';
 import type { WorkerProfile } from '../shared/districts';
 import { CATEGORIES } from '../shared/districts';
@@ -154,7 +155,7 @@ export default function CustomerPanel() {
       ) : (
         <div className="grid" style={{ marginTop: 24 }}>
           {filtered.map((w) => (
-            <div key={w.uid} className="card">
+            <Link key={w.uid} to={`/worker/${w.uid}`} className="card" style={{ color: "inherit", display: "block" }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <h3 style={{ marginBottom: 4 }}>{w.name}</h3>
@@ -184,7 +185,7 @@ export default function CustomerPanel() {
                   </span>
                 )}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
