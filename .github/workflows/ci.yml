@@ -1,44 +1,32 @@
 name: CI
-
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
-
 jobs:
   web:
-    name: Web build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Write .env.local
-        run: |
-          cat > apps/web/.env.local <<'ENVEOF'
-          VITE_FIREBASE_API_KEY=AIzaSyCkOlKQ4T0ibZKlfHV81Xu4J1wglf9bOt8
-          VITE_FIREBASE_AUTH_DOMAIN=connect-work-4b5b9.firebaseapp.com
-          VITE_FIREBASE_PROJECT_ID=connect-work-4b5b9
-          VITE_FIREBASE_STORAGE_BUCKET=connect-work-4b5b9.firebasestorage.app
-          VITE_FIREBASE_MESSAGING_SENDER_ID=1072528846005
-          VITE_FIREBASE_APP_ID=1:1072528846005:web:01f440095a83603a05e2fc
-          VITE_FIREBASE_MEASUREMENT_ID=G-21LXFLYSQN
-          ENVEOF
-      - name: Install and build
+      - name: Write env
         run: |
           cd apps/web
-          npm install --no-audit --no-fund
-          npm run build
-
+          echo "VITE_FIREBASE_API_KEY=AIzaSyCkOlKQ4T0ibZKlfHV81Xu4J1wglf9bOt8" > .env.local
+          echo "VITE_FIREBASE_AUTH_DOMAIN=connect-work-4b5b9.firebaseapp.com" >> .env.local
+          echo "VITE_FIREBASE_PROJECT_ID=connect-work-4b5b9" >> .env.local
+          echo "VITE_FIREBASE_STORAGE_BUCKET=connect-work-4b5b9.firebasestorage.app" >> .env.local
+          echo "VITE_FIREBASE_MESSAGING_SENDER_ID=1072528846005" >> .env.local
+          echo "VITE_FIREBASE_APP_ID=1:1072528846005:web:01f440095a83603a05e2fc" >> .env.local
+          echo "VITE_FIREBASE_MEASUREMENT_ID=G-21LXFLYSQN" >> .env.local
+      - name: Build web
+        run: cd apps/web && npm install --no-audit --no-fund && npm run build
   server:
-    name: Server install
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Install
-        run: cd server && npm install --no-audit --no-fund
+      - run: cd server && npm install --no-audit --no-fund
