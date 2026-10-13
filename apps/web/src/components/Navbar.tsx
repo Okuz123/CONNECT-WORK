@@ -12,7 +12,7 @@ export default function Navbar() {
   const { pathname } = useLocation();
   return (
     <header className="nav">
-      <Link to="/" className="nav__brand">CONNECT&nbsp;WORK</Link>
+      <Link to="/" className="nav__brand">CONNECT WORK</Link>
       <nav className="nav__links">
         {links.map((l) => (
           <Link
