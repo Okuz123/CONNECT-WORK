@@ -18,16 +18,23 @@ jobs:
         with:
           node-version: 20
 
-      - name: Build web (retry)
-        uses: nick-fields/retry@v3
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          retry_wait_seconds: 20
-          command: |
-            cd apps/web
-            npm install --no-audit --no-fund
-            npm run build
+      - name: Write .env.local for build
+        run: |
+          cat > apps/web/.env.local <<'ENVEOF'
+          VITE_FIREBASE_API_KEY=AIzaSyCkOlKQ4T0ibZKlfHV81Xu4J1wglf9bOt8
+          VITE_FIREBASE_AUTH_DOMAIN=connect-work-4b5b9.firebaseapp.com
+          VITE_FIREBASE_PROJECT_ID=connect-work-4b5b9
+          VITE_FIREBASE_STORAGE_BUCKET=connect-work-4b5b9.firebasestorage.app
+          VITE_FIREBASE_MESSAGING_SENDER_ID=1072528846005
+          VITE_FIREBASE_APP_ID=1:1072528846005:web:01f440095a83603a05e2fc
+          VITE_FIREBASE_MEASUREMENT_ID=G-21LXFLYSQN
+          ENVEOF
+
+      - name: Build web
+        run: |
+          cd apps/web
+          npm install --no-audit --no-fund
+          npm run build
 
       - name: Upload dist artifact
         uses: actions/upload-artifact@v4
