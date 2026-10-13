@@ -7,6 +7,8 @@ import OwnerPanel from './pages/OwnerPanel';
 import WorkerPanel from './pages/WorkerPanel';
 import CustomerPanel from './pages/CustomerPanel';
 import WorkerDetail from './pages/worker/WorkerDetail';
+import JobsList from './pages/jobs/JobsList';
+import JobDetail from './pages/jobs/JobDetail';
 
 export default function App() {
   return (
@@ -21,6 +23,8 @@ export default function App() {
           <Route path="/worker/*" element={<WorkerPanel />} />
           <Route path="/customer/*" element={<CustomerPanel />} />
           <Route path="/worker/:id" element={<WorkerDetail />} />
+          <Route path="/jobs" element={<JobsList />} />
+          <Route path="/jobs/:id" element={<JobDetail />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
